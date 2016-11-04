@@ -4,6 +4,12 @@ jquery.flowchart
 Javascript jQuery plugin that allows you to draw a flow chart. Take a look at the demo:
 http://sebastien.drouyer.com/jquery.flowchart-demo/
 
+Fork description
+-----------
+
+`verticalConnection` option added that allows to build vertical flowcharts
+![Vertical flowchart](https://monosnap.com/file/7DC8EF7sK5XNvgyfca0i42DQGDtTra.png)
+
 Description
 -----------
 

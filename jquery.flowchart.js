@@ -16,6 +16,7 @@ $(function () {
             multipleLinksOnOutput: false,
             multipleLinksOnInput: false,
             linkVerticalDecal: 0,
+            verticalConnection: 0,
             onOperatorSelect: function (operatorId) {
                 return true;
             },
@@ -69,6 +70,10 @@ $(function () {
             this._unitVariables();
 
             this.element.addClass('flowchart-container');
+
+            if (this.options.verticalConnection) {
+                $('body').addClass('flowchart-vertical');
+            }
 
             this.objs.layers.links = $('<svg class="flowchart-links-layer"></svg>');
             this.objs.layers.links.appendTo(this.element);
@@ -261,7 +266,11 @@ $(function () {
 
         _clearLinksLayer: function () {
             this.objs.layers.links.empty();
-            this.objs.layers.operators.find('.flowchart-operator-connector-small-arrow').css('border-left-color', 'transparent');
+            if (this.options.verticalConnection) {
+                this.objs.layers.operators.find('.flowchart-operator-connector-small-arrow').css('border-top-color', 'transparent');
+            } else {
+                this.objs.layers.operators.find('.flowchart-operator-connector-small-arrow').css('border-left-color', 'transparent');
+            }
         },
 
         _clearOperatorsLayer: function () {
@@ -409,14 +418,25 @@ $(function () {
 
             linkData.internal.els.mask.setAttribute("points", fromX + ',' + (fromY - offsetFromX - distanceFromArrow) + ' ' + (fromX + offsetFromX + distanceFromArrow) + ',' + fromY + ' ' + fromX + ',' + (fromY + offsetFromX + distanceFromArrow));
 
-            var bezierFromX = (fromX + offsetFromX + distanceFromArrow);
-            var bezierToX = toX + 1;
-            var bezierIntensity = Math.min(100, Math.max(Math.abs(bezierFromX - bezierToX) / 2, Math.abs(fromY - toY)));
+            var bezierFromX, bezierToX, bezierIntensity;
 
+            if (this.options.verticalConnection) {
+                fromY = fromY - 10;
+                toY = toY - 10;
+                bezierFromX = (fromX + offsetFromX + distanceFromArrow);
+                bezierToX = (toX + offsetFromX + distanceFromArrow);
 
-            linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + (fromX + offsetFromX + distanceFromArrow + bezierIntensity) + ',' + fromY + ' ' + (toX - bezierIntensity) + ',' + toY + ' ' + bezierToX + ',' + toY);
+                bezierIntensity = Math.min(100, Math.max(Math.abs(bezierFromX - bezierToX) / 2, Math.abs(fromY - toY)));
+                linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + bezierFromX + ',' + (fromY + bezierIntensity) + ' ' + bezierToX + ',' + (toY - bezierIntensity) + ' ' + bezierToX + ',' + toY);
+                linkData.internal.els.rect.setAttribute("x", fromX - 1 + this.options.linkWidth / 2);
+            } else {
+                bezierFromX = (fromX + offsetFromX + distanceFromArrow);
+                bezierToX = toX + 1;
+                bezierIntensity = Math.min(100, Math.max(Math.abs(bezierFromX - bezierToX) / 2, Math.abs(fromY - toY)));
+                linkData.internal.els.path.setAttribute("d", 'M' + bezierFromX + ',' + (fromY) + ' C' + (fromX + offsetFromX + distanceFromArrow + bezierIntensity) + ',' + fromY + ' ' + (toX - bezierIntensity) + ',' + toY + ' ' + bezierToX + ',' + toY);
+                linkData.internal.els.rect.setAttribute("x", fromX);
+            }
 
-            linkData.internal.els.rect.setAttribute("x", fromX);
             linkData.internal.els.rect.setAttribute("y", fromY - this.options.linkWidth / 2);
             linkData.internal.els.rect.setAttribute("width", offsetFromX + distanceFromArrow + 1);
             linkData.internal.els.rect.setAttribute("height", this.options.linkWidth);
@@ -464,13 +484,18 @@ $(function () {
 
             var $operator_inputs_outputs = $('<div class="flowchart-operator-inputs-outputs"></div>');
 
-            $operator_inputs_outputs.appendTo($operator);
-
             var $operator_inputs = $('<div class="flowchart-operator-inputs"></div>');
-            $operator_inputs.appendTo($operator_inputs_outputs);
 
             var $operator_outputs = $('<div class="flowchart-operator-outputs"></div>');
-            $operator_outputs.appendTo($operator_inputs_outputs);
+
+            if (this.options.verticalConnection) {
+                $operator_inputs.prependTo($operator);
+                $operator_outputs.appendTo($operator);
+            } else {
+                $operator_inputs_outputs.appendTo($operator);
+                $operator_inputs.appendTo($operator_inputs_outputs);
+                $operator_outputs.appendTo($operator_inputs_outputs);
+            }
 
             var self = this;
 
@@ -671,7 +696,7 @@ $(function () {
                 this._unsetTemporaryLink();
             }
         },
-        
+
         _unsetTemporaryLink: function () {
             this.lastOutputConnectorClicked = null;
             this.objs.layers.temporaryLink.hide();
@@ -745,8 +770,14 @@ $(function () {
             var linkData = this.data.links[linkId];
             linkData.internal.els.path.setAttribute('stroke', color);
             linkData.internal.els.rect.setAttribute('fill', color);
-            linkData.internal.els.fromSmallConnector.css('border-left-color', color);
-            linkData.internal.els.toSmallConnector.css('border-left-color', color);
+            if (this.options.verticalConnection) {
+                linkData.internal.els.fromSmallConnector.css('border-top-color', color);
+                linkData.internal.els.toSmallConnector.css('border-top-color', color);
+            } else {
+                linkData.internal.els.fromSmallConnector.css('border-left-color', color);
+                linkData.internal.els.toSmallConnector.css('border-left-color', color);
+            }
+
         },
 
         uncolorizeLink: function (linkId) {
