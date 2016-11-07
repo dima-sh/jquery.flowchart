@@ -194,3 +194,11 @@
 .flowchart-vertical .flowchart-link rect {
     display: none;
 }
+
+/*
+ * flowchart-operator-body
+ */
+.flowchart-operator-body {
+    padding: 5px;
+    cursor: move;
+}

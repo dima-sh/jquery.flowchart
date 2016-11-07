@@ -8,7 +8,10 @@ Fork description
 -----------
 
 `verticalConnection` option added that allows to build vertical flowcharts
-![Vertical flowchart](https://monosnap.com/file/7DC8EF7sK5XNvgyfca0i42DQGDtTra.png)
+
+`body` operator property added that allows to place custom html in the operator block
+
+![Vertical flowchart](https://monosnap.com/file/mhB4ZfBH20eLXfJvperNfiJT4vje8B.png)
 
 Description
 -----------
@@ -52,6 +55,8 @@ http://sebastien.drouyer.com/jquery.flowchart-demo/
 
 * __canUserMoveOperators (default: true):__ Can the user move operators using drag and drop.
 
+* __verticalConnection (default: false):__ Allows to build vertical-connected flowcharts
+
 * __data (default: `{}`):__ Initialization data defining the flow chart operators and links between them.
 
   * __operators:__ Hash defining the operators in your flow chart. The keys define the operators ID and the value define each operator's information as follow:
@@ -60,6 +65,7 @@ http://sebastien.drouyer.com/jquery.flowchart-demo/
     * __type__: (optional) The type of the operator. See `data.operatorTypes`.
     * __properties:__
       * __title__
+      * __body__
       * __class:__ css classes added to the operator DOM object. If undefined, default value is the same as `defaultOperatorClass`.
       * __inputs:__ Hash defining the box's input connectors. The keys define the connectors ID and the values define each connector's information as follow:
         * __label__: Label of the connector. If the connector is __multiple__, '(:i)' is replaced by the subconnector ID.
@@ -137,6 +143,7 @@ http://sebastien.drouyer.com/jquery.flowchart-demo/
     * link_delete
     * operator_moved
     * operator_title_change
+    * operator_body_change
     * operator_data_change
     * link_change_main_color
 
@@ -171,11 +178,21 @@ http://sebastien.drouyer.com/jquery.flowchart-demo/
   * __Parameters:__
     * __operatorId__
     * __title:__ The operator's new title to be set.
+    
+* __setOperatorBody(operatorId, body):__
+  * __Parameters:__
+    * __operatorId__
+    * __body:__ The operator's new body html.
 
 * __getOperatorTitle(operatorId):__
   * __Parameters:__
     * __operatorId__
   * __Return:__ The operator's title.
+  
+* __getOperatorBody(operatorId):__
+  * __Parameters:__
+    * __operatorId__
+  * __Return:__ The operator's body.
 
 * __setOperatorData(operatorId, operatorData):__
   * __Description:__ This method replaces the operator's data. Note that if new connectors are renamed / removed, the flowchart can remove links.
